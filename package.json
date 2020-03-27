@@ -23,7 +23,8 @@
   },
   "script": {
     "dev": "gulp dev",
-    "build": "gulp build"
+    "build": "gulp build",
+    "deploy": "gulp deploy"
   },
   "dependencies": {
     "@babel/core": "^7.9.0",

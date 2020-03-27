@@ -8,6 +8,7 @@ import autoprefixer from "gulp-autoprefixer";
 import miniCss from "gulp-csso";
 import bro from "gulp-bro";
 import babelify from "babelify";
+import ghPage from "gulp-gh-pages";
 
 
 
@@ -41,7 +42,7 @@ const pug = () =>
     .pipe(gulp.dest(route.pug.dest));
 
 
-const clean = () => del(["build"]);
+const clean = () => del(["build/", ".publish"]);
 
 const webServer = () => 
     gulp
@@ -73,15 +74,19 @@ const js = () => gulp.src(route.js.src)
             transform: [
                 babelify.configure({ presets: ['@babel/preset-env'] }),
                 [ 'uglifyify', { global: true } ]
-              ]
+                ]
         })
     )
     .pipe(gulp.dest(route.js.dest));
+
+const ghdeploy = () => gulp.src("build/**/*").pipe(ghPage())    
 
 const prepare = gulp.series([clean, img]);
 
 const assets = gulp.series([pug, style, js]);
 
-const postDev = gulp.parallel([webServer, watch]);
+const live = gulp.parallel([webServer, watch]);
 
-exports.dev = gulp.series([prepare, assets, postDev]);
+export const build = gulp.series([prepare, assets]);
+export const dev = gulp.series([build, live]);
+export const deploy = gulp.series([build, ghdeploy, clean]);
